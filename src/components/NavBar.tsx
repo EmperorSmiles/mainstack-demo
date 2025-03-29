@@ -16,7 +16,7 @@ const menuItems = [
 
 const NavBar = () => {
   return (
-    <div className="bg-white text-black/80 p-4 flex items-center justify-between rounded-3xl shadow-md w-auto ml-2 mr-2 mt-2">
+    <div className="bg-white text-black/80 p-4 flex items-center justify-between rounded-full shadow-md w-auto ml-2 mr-2 mt-2">
       {/* Logo */}
       <Image src={Logo} alt="Mainstack Logo" />
 
