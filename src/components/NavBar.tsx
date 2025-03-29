@@ -39,7 +39,7 @@ const NavBar = () => {
         <BsChatLeftText className="ml-4" />
         <div className="flex items-center justify-between bg-gray-100 p-2 rounded-2xl w-20">
           {/* Large Circle with Initials */}
-          <div className="w-4 h-4 flex items-center justify-center bg-gradient-to-b from-gray-900 to-gray-700 text-white text-sm font-bold rounded-full">
+          <div className="w-8 h-8 flex items-center justify-center bg-gradient-to-b from-gray-900 to-gray-700 text-white text-sm font-bold rounded-full">
             OJ
           </div>
 
