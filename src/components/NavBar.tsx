@@ -23,7 +23,7 @@ const NavBar = () => {
   return (
     <div className="bg-white text-black/80 p-4 flex items-center justify-between rounded-full shadow-md w-auto ml-2 mr-2 mt-2 z-20 fixed top-0 left-0 right-0 md:left-2 md:right-2 md:top-2">
       {/* Logo */}
-      <Image src={Logo} alt="Mainstack Logo" />
+      <Image src={Logo} alt=" Logo" />
 
       {/* Menu Items */}
       <ul className="flex gap-6">
