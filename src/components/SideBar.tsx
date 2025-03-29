@@ -20,7 +20,7 @@ const menuItems = [
 
 const SideBar = () => {
   return (
-    <aside className="w-auto h-auto fixed top-50 left-0 rounded-full shadow-md bg-white p-4">
+    <aside className="w-auto h-auto fixed top-50 left-0 rounded-full shadow-lg bg-white p-4">
       <TooltipProvider>
         <ul className="flex flex-col gap-4">
           {menuItems.map(({ label, href, icon }, index) => (
@@ -29,7 +29,7 @@ const SideBar = () => {
                 <TooltipTrigger asChild>
                   <a
                     href={href}
-                    className="p-2 flex items-center gap-3 grayscale hover:grayscale-0 transition-colors duration-300"
+                    className="p-2 flex items-center gap-3 grayscale hover:grayscale-0 transition-all duration-300"
                   >
                     <Image src={icon} alt={label} className="w-8 h-8" />
                   </a>

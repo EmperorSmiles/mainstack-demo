@@ -4,7 +4,7 @@ import { FiMenu } from "react-icons/fi";
 
 const UserProfile = () => {
   return (
-    <div className="flex justify-center items-center gap-2">
+    <div className="flex justify-center items-center gap-6">
       <FaRegBell className="text-black/50" />
       <BsChatLeftText className="text-black/60" />
       <div className="flex items-center justify-between bg-gray-100 p-2 rounded-3xl w-22 gap-2 hover:cursor-pointer">

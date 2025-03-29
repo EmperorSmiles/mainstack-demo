@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import Logo from "@/assets/mainstack-logo.svg";
 import { FiBarChart2, FiUsers, FiGrid } from "react-icons/fi";
 import { GoHome } from "react-icons/go";
@@ -15,6 +18,8 @@ const menuItems = [
 ];
 
 const NavBar = () => {
+  const pathname = usePathname();
+
   return (
     <div className="bg-white text-black/80 p-4 flex items-center justify-between rounded-full shadow-md w-auto ml-2 mr-2 mt-2">
       {/* Logo */}
@@ -22,15 +27,22 @@ const NavBar = () => {
 
       {/* Menu Items */}
       <ul className="flex gap-6">
-        {menuItems.map(({ label, href, icon: Icon }, index) => (
-          <li
-            key={index}
-            className="flex items-center gap-1 hover:bg-black hover:text-white p-2 rounded-xl transition-colors duration-300"
-          >
-            <Icon className="w-6 h-6 " />
-            <Link href={href}>{label}</Link>
-          </li>
-        ))}
+        {menuItems.map(({ label, href, icon: Icon }, index) => {
+          const isActive = pathname === href;
+          return (
+            <li
+              key={index}
+              className={`flex items-center gap-1 p-2 rounded-xl transition-colors duration-300 ${
+                isActive
+                  ? "bg-black text-white"
+                  : "hover:bg-gray-200 text-black/80"
+              }`}
+            >
+              <Icon className={`w-6 h-6 ${isActive ? "text-white" : ""}`} />
+              <Link href={href}>{label}</Link>
+            </li>
+          );
+        })}
       </ul>
 
       {/* User Profile */}
