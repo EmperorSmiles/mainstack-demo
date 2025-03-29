@@ -12,7 +12,7 @@ import UserProfile from "./UserProfile";
 const menuItems = [
   { label: "Home", href: "/", icon: GoHome },
   { label: "Analytics", href: "/analytics", icon: FiBarChart2 },
-  { label: "Payments", href: "/donate", icon: FaMoneyBills },
+  { label: "Revenue", href: "/revenue", icon: FaMoneyBills },
   { label: "CRM", href: "/crm", icon: FiUsers },
   { label: "Apps", href: "/apps", icon: FiGrid },
 ];
@@ -30,17 +30,18 @@ const NavBar = () => {
         {menuItems.map(({ label, href, icon: Icon }, index) => {
           const isActive = pathname === href;
           return (
-            <li
-              key={index}
-              className={`flex items-center gap-1 p-2 rounded-xl transition-colors duration-300 ${
-                isActive
-                  ? "bg-black text-white"
-                  : "hover:bg-gray-200 text-black/80"
-              }`}
-            >
-              <Icon className={`w-6 h-6 ${isActive ? "text-white" : ""}`} />
-              <Link href={href}>{label}</Link>
-            </li>
+            <Link key={index} href={href} className="outline-none">
+              <li
+                className={`flex items-center gap-1 p-2 rounded-xl transition-colors duration-300 group hover:cursor-pointer ${
+                  isActive
+                    ? "bg-black text-white"
+                    : "hover:bg-gray-200 text-black/80"
+                }`}
+              >
+                <Icon className={`w-6 h-6 ${isActive ? "text-white" : ""}`} />
+                <span>{label}</span>
+              </li>
+            </Link>
           );
         })}
       </ul>
