@@ -14,16 +14,24 @@ import {
 } from "@/components/ui/popover";
 import { RxChevronDown } from "react-icons/rx";
 
-export function DatePicker() {
-  const [date, setDate] = React.useState<Date>();
+interface DatePickerProps {
+  date: Date | undefined;
+  setDate: (date: Date | undefined) => void;
+  placeholder?: string;
+}
 
+export function DatePicker({
+  date,
+  setDate,
+  placeholder = "Pick a date",
+}: DatePickerProps) {
   return (
     <Popover>
       <PopoverTrigger asChild>
         <Button
           variant={"secondary"}
           className={cn(
-            "w-[280px] justify-start text-left font-normal",
+            "w-full justify-start text-left font-normal focus:!border-2 focus:!border-black active:border-2 active:!border-black ",
             !date && "text-muted-foreground"
           )}
         >
@@ -32,7 +40,7 @@ export function DatePicker() {
             format(date, "PPP")
           ) : (
             <span className="flex w-full items-center justify-between">
-              Pick a date
+              {placeholder}
               <RxChevronDown className="ml-2" />
             </span>
           )}
