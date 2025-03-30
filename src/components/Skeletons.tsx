@@ -5,7 +5,7 @@ export function BalanceLoading() {
 }
 
 export function ChartLoading() {
-  return <div className="bg-gray-300 animate-pulse h-3/4 w-full"></div>;
+  return <div className="bg-gray-300 animate-pulse max-auto w-auto"></div>;
 }
 
 export function BalanceDetailsLoading() {
