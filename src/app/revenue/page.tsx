@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import MainChart from "@/components/MainChart";
 import TransactionsBlock from "../../components/TransactionsBlock";
 import { Transaction } from "@/types/type";
+import FilterCard from "@/components/FilterCard";
 
 interface DataType {
   date: string;
@@ -61,8 +62,8 @@ export default function Revenue() {
   }, []);
 
   return (
-    <div className="pt-24 px-8 mx-8 ">
-      <section className="mb-6">
+    <div className="mt-24 px-4 md:px-8 mx-auto max-w-screen-xl grid grid-cols-1 gap-6 md:gap-8 md:mx-8">
+      <section className="w-full my-4 md:my-8">
         <MainChart
           chartData={chartData}
           balance={balance}
@@ -70,7 +71,10 @@ export default function Revenue() {
           walletData={walletData}
         />
       </section>
-      <TransactionsBlock transactions={transactions} loading={loading} />
+      <section className="w-full mt-6 md:mt-34">
+        <TransactionsBlock transactions={transactions} loading={loading} />
+      </section>
+      <FilterCard />
     </div>
   );
 }
