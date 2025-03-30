@@ -46,7 +46,6 @@ const NavBar = () => {
         })}
       </ul>
 
-      {/* User Profile */}
       <UserProfile />
     </div>
   );
