@@ -2,6 +2,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { format } from "date-fns";
 import { Transaction } from "@/types/type";
+import {
+  RxArrowBottomLeft,
+  RxCross1,
+  RxArrowDown,
+  RxChevronDown,
+} from "react-icons/rx";
 
 interface TransactionsBlockProps {
   transactions: Transaction[];
@@ -12,9 +18,9 @@ const TransactionsBlock: React.FC<TransactionsBlockProps> = ({
   transactions,
   loading,
 }) => {
-  const getTransactionName = (transaction: Transaction) => {
-    return transaction.metadata?.name || transaction.type || "Transaction";
-  };
+  // const getTransactionName = (transaction: Transaction) => {
+  //   return transaction.metadata?.name || transaction.type || "Transaction";
+  // };
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-US", {
@@ -35,8 +41,14 @@ const TransactionsBlock: React.FC<TransactionsBlockProps> = ({
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline">Filter</Button>
-          <Button variant="outline">Export List</Button>
+          <Button variant="secondary" className="rounded-full">
+            Filter
+            <RxChevronDown className="ml-2" />
+          </Button>
+          <Button variant="secondary" className="rounded-full">
+            Export List
+            <RxArrowDown className="mL-2" />
+          </Button>
         </div>
       </CardHeader>
 
@@ -47,63 +59,81 @@ const TransactionsBlock: React.FC<TransactionsBlockProps> = ({
           </div>
         ) : transactions.length === 0 ? (
           <div className="text-center py-6">
-            <p className="text-muted-foreground">No transactions available</p>
+            <p className="text-muted-foreground">All recent transactions</p>
           </div>
         ) : (
           <ul className="space-y-4">
-            {transactions.map((transaction) => (
-              <li
-                key={transaction.payment_reference}
-                className="flex items-center justify-between p-3 rounded-lg hover:bg-slate-50"
-              >
-                <div className="flex items-center gap-3">
-                  <div
-                    className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                      transaction.status === "successful"
-                        ? "bg-green-100"
-                        : "bg-red-100"
-                    }`}
-                  >
-                    <span
-                      className={
-                        transaction.status === "successful"
-                          ? "text-green-600"
-                          : "text-red-600"
-                      }
+            {transactions.map((transaction, index) => {
+              const { amount, metadata, status, type, date } = transaction;
+              const productName = (metadata as { product_name?: string })
+                ?.product_name;
+              const author = metadata?.name;
+              const isSuccessful = status === "successful";
+
+              return (
+                <li
+                  key={index}
+                  className="flex items-center justify-between p-3 rounded-lg hover:bg-slate-50"
+                >
+                  {/* Left side: icon + text */}
+                  <div className="flex items-center gap-3">
+                    {/* Icon changes color if successful or not */}
+                    <div
+                      className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                        isSuccessful ? "bg-green-100" : "bg-red-100"
+                      }`}
                     >
-                      {transaction.status === "successful" ? "✔" : "✖"}
-                    </span>
-                  </div>
-                  <div>
-                    <p className="font-medium">
-                      {getTransactionName(transaction)}
-                    </p>
-                    <div className="flex gap-2 text-sm text-muted-foreground">
-                      <span>
-                        {format(new Date(transaction.date), "MMM d, yyyy")}
-                      </span>
-                      {transaction.status && (
+                      {isSuccessful ? (
+                        <RxArrowBottomLeft className="w-5 h-5 text-green-600" />
+                      ) : (
+                        <RxCross1 className="w-5 h-5 text-red-600" />
+                      )}
+                    </div>
+
+                    <div>
+                      {productName ? (
                         <>
-                          <span>•</span>
-                          <span
-                            className={`capitalize ${
-                              transaction.status === "successful"
-                                ? "text-green-600"
-                                : "text-amber-600"
-                            }`}
-                          >
-                            {transaction.status}
-                          </span>
+                          <p className="font-medium">{productName}</p>
+
+                          {author && (
+                            <p className="text-sm text-muted-foreground">
+                              {author}
+                            </p>
+                          )}
+                        </>
+                      ) : (
+                        <>
+                          <p className="font-medium capitalize">{type}</p>
+                          {status && (
+                            <div className="flex text-sm text-muted-foreground">
+                              <span
+                                className={`capitalize ${
+                                  isSuccessful
+                                    ? "text-green-600"
+                                    : "text-amber-600"
+                                }`}
+                              >
+                                {status}
+                              </span>
+                            </div>
+                          )}
                         </>
                       )}
                     </div>
                   </div>
-                </div>
-                <span className="font-bold text-right">
-                  {formatCurrency(transaction.amount)}
-                </span>
-              </li>
-            ))}
+
+                  {/* Right side: amount + date */}
+                  <div className="flex flex-col gap-0.5">
+                    <span className="font-bold text-right">
+                      {formatCurrency(amount)}
+                    </span>
+                    <span className="text-muted-foreground">
+                      {date ? format(new Date(date), "MMM d, yyyy") : "N/A"}
+                    </span>
+                  </div>
+                </li>
+              );
+            })}
           </ul>
         )}
       </CardContent>
