@@ -1,5 +1,11 @@
 "use client";
-import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
+import {
+  CartesianGrid,
+  Line,
+  LineChart,
+  XAxis,
+  ResponsiveContainer,
+} from "recharts";
 import {
   Card,
   CardContent,
@@ -27,7 +33,6 @@ interface DataType {
 
 interface MainChartProps {
   chartData: DataType[];
-  balance: number | null;
   loading: boolean;
   walletData: Record<string, number> | null;
 }
@@ -42,7 +47,6 @@ const chartConfig = {
 
 export default function MainChart({
   chartData,
-  balance,
   loading,
   walletData,
 }: MainChartProps) {
@@ -51,7 +55,6 @@ export default function MainChart({
     return new Intl.DateTimeFormat("en-US", {
       month: "short",
       day: "numeric",
-      year: "numeric",
     }).format(new Date(dateStr));
   };
 
@@ -63,41 +66,43 @@ export default function MainChart({
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-10 gap-4 md:gap-12 w-full h-11/12">
-      {
-        <Card className="w-full h-72 md:col-span-7 mb-6 md:mb-14">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle>Available Balance</CardTitle>
-                <CardDescription
-                  className={
-                    loading
-                      ? "animate-pulse text-4xl font-bold"
-                      : "text-4xl font-bold"
-                  }
-                >
-                  {loading ? (
-                    <BalanceLoading />
-                  ) : balance !== null ? (
-                    `$${balance}`
-                  ) : (
-                    "N/A"
-                  )}
-                </CardDescription>
-              </div>
-              <Button className="rounded-full">Withdraw</Button>
+    <div className="grid grid-cols-1 md:grid-cols-10 gap-2 md:gap-4 w-full">
+      <Card className="w-full md:col-span-7">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-muted-foreground">
+                Available Balance
+              </CardTitle>
+              <CardDescription
+                className={
+                  loading
+                    ? "animate-pulse text-4xl font-bold"
+                    : "text-4xl font-bold text-black"
+                }
+              >
+                {loading ? (
+                  <BalanceLoading />
+                ) : walletData !== null ? (
+                  `$${walletData?.balance}`
+                ) : (
+                  "N/A"
+                )}
+              </CardDescription>
             </div>
-          </CardHeader>
-          <CardContent className="px-0 pb-0">
-            <ChartContainer config={chartConfig} className="h-full">
-              {loading ? (
-                <ChartLoading />
-              ) : (
+            <Button className="rounded-full">Withdraw</Button>
+          </div>
+        </CardHeader>
+        <CardContent className="px-0 pb-0 h-48 md:h-64 w-full ml-2 md:m-4">
+          <ChartContainer config={chartConfig} className="w-full h-full">
+            {loading ? (
+              <ChartLoading />
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
                 <LineChart
                   accessibilityLayer
                   data={chartData}
-                  margin={{ left: 40, right: 40, top: 5, bottom: 25 }}
+                  margin={{ left: 10, right: 10, top: 5, bottom: 25 }}
                 >
                   <CartesianGrid />
                   <XAxis
@@ -109,7 +114,7 @@ export default function MainChart({
                     ticks={getTickValues()}
                     interval={0}
                     minTickGap={0}
-                    className="text-md text-muted-foreground"
+                    className="text-md text-muted-foreground mx-10"
                   />
                   <ChartTooltip
                     cursor={false}
@@ -123,27 +128,49 @@ export default function MainChart({
                     dot={{ r: 3 }}
                   />
                 </LineChart>
-              )}
-            </ChartContainer>
-          </CardContent>
-        </Card>
-      }
-      <Card className="w-full h-72 md:col-span-3 rounded-0 shadow-none mt-20 md:mt-0">
+              </ResponsiveContainer>
+            )}
+          </ChartContainer>
+        </CardContent>
+      </Card>
+      <Card className="w-full md:col-span-3 rounded-0 shadow-none mt-0">
         <CardContent>
           {loading || !walletData ? (
             <BalanceDetailsLoading />
           ) : (
             <ul className="space-y-2">
-              {Object.entries(walletData).map(([key, value]) => (
-                <li key={key} className="flex flex-col justify-between">
-                  <span className="capitalize text-muted-foreground">
-                    {key.replace(/_/g, " ")}:
-                  </span>
-                  <span className="font-bold text-xl md:text-2xl">
-                    ${value}
-                  </span>
-                </li>
-              ))}
+              <li className="flex flex-col justify-between">
+                <span className="capitalize text-muted-foreground">
+                  Ledger Balance
+                </span>
+                <span className="font-bold text-xl md:text-2xl">
+                  ${walletData.ledger_balance}
+                </span>
+              </li>
+              <li className="flex flex-col justify-between">
+                <span className="capitalize text-muted-foreground">
+                  Total Payout
+                </span>
+                <span className="font-bold text-xl md:text-2xl">
+                  ${walletData.total_payout}
+                </span>
+              </li>
+              <li className="flex flex-col justify-between">
+                <span className="capitalize text-muted-foreground">
+                  Total Revenue
+                </span>
+                <span className="font-bold text-xl md:text-2xl">
+                  ${walletData.total_revenue}
+                </span>
+              </li>
+              <li className="flex flex-col justify-between">
+                <span className="capitalize text-muted-foreground">
+                  Pending Payout
+                </span>
+                <span className="font-bold text-xl md:text-2xl">
+                  ${walletData.pending_payout}
+                </span>
+              </li>
             </ul>
           )}
         </CardContent>
