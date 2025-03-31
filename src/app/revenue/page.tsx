@@ -120,8 +120,8 @@ export default function Revenue() {
           ),
         ]);
 
-        console.log("Wallet Data:", walletRes);
-        console.log("Transaction Data:", txnRes);
+        // console.log("Wallet Data:", walletRes);
+        // console.log("Transaction Data:", txnRes);
 
         // setBalance(walletRes.balance);
         setWalletData(walletRes);
@@ -151,8 +151,16 @@ export default function Revenue() {
     fetchData();
   }, []);
 
+  // console.log("filters", filters);
+
+  const activeFilterCount =
+    (filters.dateRange.startDate ? 1 : 0) +
+    (filters.dateRange.endDate ? 1 : 0) +
+    filters.transactionTypes.length +
+    filters.transactionStatus.length;
+
   return (
-    <div className="mt-24 px-4 md:flex md: flex-col gap-2 md:gap-4 md:mx-8">
+    <div className="mt-24 px-2 md:flex flex-col gap-2 md:gap-4 md:mx-8">
       <section className="w-auto">
         <MainChart
           chartData={chartData}
@@ -166,15 +174,19 @@ export default function Revenue() {
           transactions={filteredTransactions}
           loading={loading}
           displayFilter={displayFilter}
+          activeFilterCount={activeFilterCount}
         />
       </section>
       {showFilter && (
-        <FilterCard
-          displayFilter={displayFilter}
-          onApplyFilters={handleFilterChange}
-          onClearFilters={clearFilters}
-          currentFilters={filters}
-        />
+        <div className="fixed inset-0 bg-white/20 backdrop-blur-sm z-40">
+          <FilterCard
+            displayFilter={displayFilter}
+            onApplyFilters={handleFilterChange}
+            onClearFilters={clearFilters}
+            currentFilters={filters}
+            activeFilterCount={activeFilterCount}
+          />
+        </div>
       )}
     </div>
   );
