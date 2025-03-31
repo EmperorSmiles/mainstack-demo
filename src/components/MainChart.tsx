@@ -4,7 +4,7 @@ import {
   Line,
   LineChart,
   XAxis,
-  ResponsiveContainer,
+  // ResponsiveContainer,
 } from "recharts";
 import {
   Card,
@@ -71,14 +71,14 @@ export default function MainChart({
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-muted-foreground">
+              <CardTitle className="text-muted-foreground text-xs md:text-sm">
                 Available Balance
               </CardTitle>
               <CardDescription
                 className={
                   loading
                     ? "animate-pulse text-4xl font-bold"
-                    : "text-4xl font-bold text-black"
+                    : " text-xl md:text-4xl font-bold text-black"
                 }
               >
                 {loading ? (
@@ -98,37 +98,36 @@ export default function MainChart({
             {loading ? (
               <ChartLoading />
             ) : (
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart
-                  accessibilityLayer
-                  data={chartData}
-                  margin={{ left: 10, right: 10, top: 5, bottom: 25 }}
-                >
-                  <CartesianGrid />
-                  <XAxis
-                    dataKey="date"
-                    tickLine={false}
-                    axisLine={false}
-                    tickMargin={8}
-                    tickFormatter={formatDate}
-                    ticks={getTickValues()}
-                    interval={0}
-                    minTickGap={0}
-                    className="text-md text-muted-foreground mx-10"
-                  />
-                  <ChartTooltip
-                    cursor={false}
-                    content={<ChartTooltipContent hideLabel />}
-                  />
-                  <Line
-                    dataKey="amount"
-                    type="natural"
-                    stroke="var(--color-chart-5)"
-                    strokeWidth={2}
-                    dot={{ r: 3 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
+              // <ResponsiveContainer className="w-full">
+              <LineChart
+                accessibilityLayer
+                data={chartData}
+                margin={{ left: 10, right: 10, top: 5, bottom: 25 }}
+              >
+                <CartesianGrid />
+                <XAxis
+                  dataKey="date"
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={8}
+                  tickFormatter={formatDate}
+                  ticks={getTickValues()}
+                  interval={0}
+                  minTickGap={0}
+                  className="text-md text-muted-foreground mx-10"
+                />
+                <ChartTooltip
+                  cursor={false}
+                  content={<ChartTooltipContent hideLabel />}
+                />
+                <Line
+                  dataKey="amount"
+                  type="natural"
+                  stroke="var(--color-chart-5)"
+                  strokeWidth={2}
+                  dot={{ r: 3 }}
+                />
+              </LineChart>
             )}
           </ChartContainer>
         </CardContent>
@@ -140,34 +139,34 @@ export default function MainChart({
           ) : (
             <ul className="space-y-2">
               <li className="flex flex-col justify-between">
-                <span className="capitalize text-muted-foreground">
+                <span className="capitalize text-muted-foreground text-xs md:text-sm">
                   Ledger Balance
                 </span>
-                <span className="font-bold text-xl md:text-2xl">
+                <span className="font-bold text-lg md:text-2xl">
                   ${walletData.ledger_balance}
                 </span>
               </li>
               <li className="flex flex-col justify-between">
-                <span className="capitalize text-muted-foreground">
+                <span className="capitalize text-muted-foreground text-xs md:text-sm">
                   Total Payout
                 </span>
-                <span className="font-bold text-xl md:text-2xl">
+                <span className="font-bold text-lg md:text-2xl">
                   ${walletData.total_payout}
                 </span>
               </li>
               <li className="flex flex-col justify-between">
-                <span className="capitalize text-muted-foreground">
+                <span className="capitalize text-muted-foreground text-xs md:text-sm">
                   Total Revenue
                 </span>
-                <span className="font-bold text-xl md:text-2xl">
+                <span className="font-bold text-lg md:text-2xl">
                   ${walletData.total_revenue}
                 </span>
               </li>
               <li className="flex flex-col justify-between">
-                <span className="capitalize text-muted-foreground">
+                <span className="capitalize text-muted-foreground text-xs md:text-sm">
                   Pending Payout
                 </span>
-                <span className="font-bold text-xl md:text-2xl">
+                <span className="font-bold text-lg md:text-2xl">
                   ${walletData.pending_payout}
                 </span>
               </li>
