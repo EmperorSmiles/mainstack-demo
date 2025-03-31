@@ -33,6 +33,7 @@ interface FilterCardProps {
   onApplyFilters: (filters: Filters) => void;
   onClearFilters: () => void;
   currentFilters: Filters;
+  activeFilterCount: number;
 }
 
 const FilterCard = ({
@@ -93,16 +94,22 @@ const FilterCard = ({
 
     // Notify parent
     onClearFilters();
-
-    // Don't close the filter panel
   };
+
+  const hasFilters =
+    (startDate ? 1 : 0) +
+    (endDate ? 1 : 0) +
+    selectedTypes.length +
+    selectedStatuses.length;
+
+  const dateBtn = ["Today", "Last 7 days", "This month", "Last 3 months"];
 
   return (
     <Card
-      className={`w-3.4 md:w-2/6 h-full bg-white shadow-md rounded-lg fixed top-0 right-0 z-50 transform transition-transform duration-300 ease-in-out
+      className={`w-3/4 md:w-2/6 h-screen bg-white shadow-md rounded-lg fixed top-0 right-0 z-50 transform transition-transform duration-300 ease-in-out
         ${isOpening && !isClosing ? "translate-x-0" : "translate-x-full"}`}
     >
-      <CardHeader className="md:text-lg font-medium">
+      <CardHeader className="text-sm md:text-lg font-medium">
         <div className="flex items-center justify-between">
           <h1>Filter</h1>
           <RxCross1
@@ -110,20 +117,27 @@ const FilterCard = ({
             onClick={() => handleClose()}
           />
         </div>
+        <div className="flex overflow-x-auto space-x-2 scrollbar-hide">
+          {dateBtn.map((btn) => (
+            <Button key={btn} variant="secondary" className="m-2">
+              {btn}
+            </Button>
+          ))}
+        </div>
       </CardHeader>
 
       <CardContent>
         <div className="flex flex-col gap-1">
           <p className="text-sm md:text-lg font-medium">Date Range</p>
-          <div className="flex gap-2 justify-between">
-            <div className="flex-1">
+          <div className="flex flex-col md:flex-row gap-2 justify-between">
+            <div className="flex-1 focus:bg-border-4 focus:bg-border-black hover:cursor-pointer">
               <DatePicker
                 date={startDate}
                 setDate={setStartDate}
                 placeholder="Start date"
               />
             </div>
-            <div className="flex-1">
+            <div className="flex-1 hover:cursor-pointer">
               <DatePicker
                 date={endDate}
                 setDate={setEndDate}
@@ -133,7 +147,7 @@ const FilterCard = ({
           </div>
         </div>
         <div className="flex flex-col gap-1">
-          <p className="text-sm md:text-lg font-medium mt-4">
+          <p className="text-sm md:text-lg font-medium mt-2">
             Transaction Type
           </p>
           <DropDownCheck
@@ -154,23 +168,24 @@ const FilterCard = ({
             defaultSelected={selectedStatuses}
           />
         </div>
-        <CardFooter className="flex gap-2 justify-between mt-24 md:mt-72">
-          <Button
-            className="w-1/2 cursor-pointer hover:bg-gray-300"
-            variant="secondary"
-            onClick={handleClearFilters}
-          >
-            Clear
-          </Button>
-          <Button
-            className="w-1/2 cursor-pointer"
-            variant="default"
-            onClick={handleApplyFilters}
-          >
-            Apply
-          </Button>
-        </CardFooter>
       </CardContent>
+      <CardFooter className="flex gap-2 justify-between mt-auto mb-2 md:mb-4">
+        <Button
+          className="w-1/2 cursor-pointer hover:bg-gray-300"
+          variant="secondary"
+          onClick={hasFilters ? handleClearFilters : handleClose}
+        >
+          {hasFilters ? "Clear" : "Close"}
+        </Button>
+        <Button
+          className="w-1/2 cursor-pointer"
+          variant="default"
+          onClick={handleApplyFilters}
+          disabled={!hasFilters}
+        >
+          Apply
+        </Button>
+      </CardFooter>
     </Card>
   );
 };
