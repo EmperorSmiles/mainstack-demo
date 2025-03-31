@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -35,7 +35,7 @@ export function DropDownCheck({
   onChange,
   defaultSelected = [],
   buttonVariant = "secondary",
-  labelClassName = "text-xl font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer py-2",
+  labelClassName = "text-lg md:text-xl font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 group-hover:cursor-pointer py-2",
 }: DropDownCheckProps) {
   const [containerWidth, setContainerWidth] = useState<number>(0);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -88,18 +88,18 @@ export function DropDownCheck({
           align="start"
           sideOffset={3}
         >
-          <div className="space-y-2 p-4 group-hover:cursor-pointer">
+          <div className="space-y-2 p-4 ">
             {items.map((item) => (
               <div
                 key={item.id}
-                className="flex items-center space-x-2 pl-6 "
+                className="flex items-center space-x-2 pl-6 group-hover:cursor-pointer"
                 onClick={() => handleToggle(item.id)}
               >
                 <Checkbox
                   id={item.id}
                   checked={defaultSelected.includes(item.id)}
                   // onCheckedChange={() => handleToggle(item.id)}
-                  className="border-2 border-black"
+                  className="border-2 border-black group-hover:cursor-pointer"
                 />
                 <label
                   htmlFor={item.label}
