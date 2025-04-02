@@ -1,10 +1,9 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import MainChart from "@/components/MainChart";
 import TransactionsBlock from "../../components/TransactionsBlock";
 import { Transaction } from "@/types/type";
 import FilterCard from "@/components/FilterCard";
-// import FilterCard from "@/components/FilterCard";
 
 interface DataType {
   date: string;
@@ -26,6 +25,7 @@ export default function Revenue() {
   const [chartData, setChartData] = useState<DataType[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const [filteredTransactions, setFilteredTransactions] = useState<
     Transaction[]
   >([]);
@@ -35,19 +35,19 @@ export default function Revenue() {
     transactionTypes: [],
     transactionStatus: [],
   });
-
   const [walletData, setWalletData] = useState<Record<string, number> | null>(
     null
   );
 
-  // Toggle filter display
   const displayFilter = () => {
     setShowFilter(!showFilter);
   };
 
-  // Apply filters to transactions
-  const applyFilters = () => {
-    if (!transactions.length) return;
+  const applyFilters = useCallback(() => {
+    if (!transactions.length) {
+      setFilteredTransactions([]);
+      return;
+    }
 
     let results = [...transactions];
     const { dateRange, transactionTypes, transactionStatus } = filters;
@@ -56,21 +56,12 @@ export default function Revenue() {
     if (dateRange.startDate || dateRange.endDate) {
       results = results.filter((txn) => {
         const txnDate = new Date(txn.date);
-
-        // Check start date
-        if (dateRange.startDate && txnDate < dateRange.startDate) {
-          return false;
-        }
-
-        // Check end date
+        if (dateRange.startDate && txnDate < dateRange.startDate) return false;
         if (dateRange.endDate) {
           const endOfDay = new Date(dateRange.endDate);
           endOfDay.setHours(23, 59, 59, 999);
-          if (txnDate > endOfDay) {
-            return false;
-          }
+          if (txnDate > endOfDay) return false;
         }
-
         return true;
       });
     }
@@ -86,73 +77,96 @@ export default function Revenue() {
     }
 
     setFilteredTransactions(results);
-  };
+  }, [transactions, filters]);
 
-  // Handle filter updates
   const handleFilterChange = (newFilters: Filters) => {
     setFilters(newFilters);
   };
 
   // Clear all filters
-  const clearFilters = () => {
+  const clearFilters = useCallback(() => {
     setFilters({
       dateRange: { startDate: undefined, endDate: undefined },
       transactionTypes: [],
       transactionStatus: [],
     });
-    setFilteredTransactions(transactions);
-  };
 
-  useEffect(() => {
-    // Apply filters whenever filters change
-    applyFilters();
-  }, [filters, transactions]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [walletRes, txnRes] = await Promise.all([
-          fetch("https://fe-task-api.mainstack.io/wallet").then((res) =>
-            res.json()
-          ),
-          fetch("https://fe-task-api.mainstack.io/transactions").then((res) =>
-            res.json()
-          ),
-        ]);
-
-        // console.log("Wallet Data:", walletRes);
-        // console.log("Transaction Data:", txnRes);
-
-        // setBalance(walletRes.balance);
-        setWalletData(walletRes);
-        setTransactions(txnRes);
-        setFilteredTransactions(txnRes);
-
-        // Convert transaction amounts into chart data
-        const formattedData = txnRes
-          .filter((txn: Transaction) => txn.date)
-          .map((txn: Transaction) => ({
-            date: new Date(txn.date).toISOString().split("T")[0],
-            amount: txn.amount,
-          }))
-          .sort(
-            (a: DataType, b: DataType) =>
-              new Date(a.date).getTime() - new Date(b.date).getTime()
-          );
-
-        setChartData(formattedData);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
+    // setFilteredTransactions(transactions);
   }, []);
 
-  // console.log("filters", filters);
+  // --- Fetch Data Logic ---
+  const fetchData = useCallback(async () => {
+    // chore: Wrap in useCallback☑️
+    setLoading(true);
+    setFetchError(null);
+    // clear previous data while loading to prevent stale display
+    setTransactions([]);
+    setFilteredTransactions([]);
+    setWalletData(null);
+    setChartData([]);
+    try {
+      const [walletRes, txnRes] = await Promise.all([
+        fetch("https://fe-task-api.mainstack.io/wallet").then((res) => {
+          if (!res.ok)
+            throw new Error(`Wallet fetch failed: ${res.statusText}`);
+          return res.json();
+        }),
+        fetch("https://fe-task-api.mainstack.io/transactions").then((res) => {
+          if (!res.ok)
+            throw new Error(`Transactions fetch failed: ${res.statusText}`);
+          //  Simulate an error for testing
+          // throw new Error("Simulated fetch error");
+          // End simulation
+          return res.json();
+        }),
+      ]);
 
+      // Ensure txnRes is an array, even if API returns something else unexpectedly
+      const safeTxnRes = Array.isArray(txnRes) ? txnRes : [];
+
+      setWalletData(walletRes);
+      setTransactions(safeTxnRes);
+
+      const formattedData = safeTxnRes
+        .filter((txn: Transaction) => txn.date)
+        .map((txn: Transaction) => ({
+          date: new Date(txn.date).toISOString().split("T")[0],
+          amount: txn.amount,
+        }))
+        .sort(
+          (a: DataType, b: DataType) =>
+            new Date(a.date).getTime() - new Date(b.date).getTime()
+        );
+      setChartData(formattedData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      const errorMessage =
+        error instanceof Error ? error.message : "An unknown error occurred";
+      setFetchError(errorMessage);
+      setTransactions([]);
+      setFilteredTransactions([]);
+      setWalletData(null);
+      setChartData([]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  //  Effect for Initial Fetch
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  // Effect to Apply Filters
+  useEffect(() => {
+    if (!loading && !fetchError) {
+      applyFilters();
+    } else if (fetchError) {
+      setFilteredTransactions([]);
+    }
+  }, [filters, transactions, loading, fetchError, applyFilters]);
+
+  // Calculate active filter count
   const activeFilterCount =
     (filters.dateRange.startDate ? 1 : 0) +
     (filters.dateRange.endDate ? 1 : 0) +
@@ -164,21 +178,24 @@ export default function Revenue() {
       <section className="w-auto">
         <MainChart
           chartData={chartData}
-          // balance={balance}
           loading={loading}
           walletData={walletData}
+          error={fetchError}
         />
       </section>
       <section className="w-full mt-2 md:4">
         <TransactionsBlock
           transactions={filteredTransactions}
           loading={loading}
+          error={fetchError}
+          handleReload={fetchData}
           displayFilter={displayFilter}
           activeFilterCount={activeFilterCount}
+          handleClearFilters={clearFilters}
         />
       </section>
       {showFilter && (
-        <div className="fixed inset-0 bg-white/20 backdrop-blur-sm z-40">
+        <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 flex items-center justify-center">
           <FilterCard
             displayFilter={displayFilter}
             onApplyFilters={handleFilterChange}
