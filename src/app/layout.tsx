@@ -23,8 +23,10 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.variable} antialiased`}>
         <NavBar />
-        <SideBar />
-        {children}
+        <div className="flex w-full">
+          <SideBar />
+          <main className="w-full md:w-[90%] md:ml-[10%]">{children}</main>
+        </div>
       </body>
     </html>
   );
