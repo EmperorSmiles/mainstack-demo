@@ -18,12 +18,25 @@ import UserProfile from "./UserProfile";
 import { useEffect, useState, useRef } from "react";
 import { User } from "@/types/type";
 
+// Import app icons
+import LinkProduct from "@/assets/LinkInBio.svg";
+import Paper from "@/assets/Store.svg";
+import Folder from "@/assets/MediaKit.svg";
+import ProductIcon from "@/assets/Invoicing.svg";
+
 const menuItems = [
   { label: "Home", href: "/", icon: GoHome },
   { label: "Analytics", href: "/analytics", icon: FiBarChart2 },
   { label: "Revenue", href: "/revenue", icon: FaMoneyBills },
   { label: "CRM", href: "/crm", icon: FiUsers },
-  { label: "Apps", href: "/apps", icon: FiGrid },
+  { label: "Apps", href: "/apps", icon: FiGrid, hasDropdown: true },
+];
+
+const appsItems = [
+  { label: "LinkInBio", href: "/apps/", icon: LinkProduct },
+  { label: "Store", href: "/apps/", icon: ProductIcon },
+  { label: "MediaKit", href: "/apps/-kit", icon: Folder },
+  { label: "Invoicing", href: "/apps", icon: Paper },
 ];
 
 const userMenuItems = [
@@ -33,14 +46,16 @@ const userMenuItems = [
   { label: "Integrations", href: "/revenue", icon: FiGrid },
   { label: "Report Bug", href: "/revenue", icon: GoBug },
   { label: "Switch Account", href: "/revenue", icon: MdOutlineSwitchAccount },
-  { label: "Sign Out Out", href: "/revenue", icon: FiLogOut },
+  { label: "Sign Out", href: "/revenue", icon: FiLogOut },
 ];
 
 const NavBar = () => {
   const pathname = usePathname();
   const [user, setUser] = useState<User | null>(null);
   const [showMenu, setShowMenu] = useState(false);
+  const [showAppsDropdown, setShowAppsDropdown] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const appsDropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -55,13 +70,18 @@ const NavBar = () => {
     };
 
     fetchUser();
-    // console.log(user);
   }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setShowMenu(false);
+      }
+      if (
+        appsDropdownRef.current &&
+        !appsDropdownRef.current.contains(event.target as Node)
+      ) {
+        setShowAppsDropdown(false);
       }
     };
 
@@ -102,21 +122,56 @@ const NavBar = () => {
 
       {/* Menu Items */}
       <ul className="md:flex hidden gap-6">
-        {menuItems.map(({ label, href, icon: Icon }, index) => {
+        {menuItems.map(({ label, href, icon: Icon, hasDropdown }, index) => {
           const isActive = pathname === href;
           return (
-            <Link key={index} href={href} className="outline-none">
-              <li
-                className={`flex items-center gap-1 p-2 rounded-xl transition-colors duration-300 group hover:cursor-pointer ${
-                  isActive
-                    ? "bg-black text-white"
-                    : "hover:bg-gray-200 text-black/80"
-                }`}
-              >
-                <Icon className={`w-6 h-6 ${isActive ? "text-white" : ""}`} />
-                <span>{label}</span>
-              </li>
-            </Link>
+            <div key={index} className="relative">
+              <Link href={hasDropdown ? "#" : href} className="outline-none">
+                <li
+                  className={`flex items-center gap-1 p-2 rounded-xl transition-colors duration-300 group hover:cursor-pointer ${
+                    isActive
+                      ? "bg-black text-white"
+                      : "hover:bg-gray-200 text-black/80"
+                  }`}
+                  onMouseEnter={() => {
+                    if (hasDropdown) setShowAppsDropdown(true);
+                  }}
+                  onClick={(e) => {
+                    if (hasDropdown) {
+                      e.preventDefault();
+                      setShowAppsDropdown(!showAppsDropdown);
+                    }
+                  }}
+                >
+                  <Icon className={`w-6 h-6 ${isActive ? "text-white" : ""}`} />
+                  <span>{label}</span>
+                </li>
+              </Link>
+
+              {hasDropdown && showAppsDropdown && (
+                <div
+                  className="absolute left-0 mt-2 w-64 bg-white rounded-lg shadow-lg overflow-hidden z-30"
+                  ref={appsDropdownRef}
+                  onMouseLeave={() => setShowAppsDropdown(false)}
+                >
+                  <div className="py-2 grid grid-cols-1 gap-2 p-3">
+                    {appsItems.map(({ label, href, icon }, appIndex) => (
+                      <Link key={appIndex} href={href}>
+                        <div className="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 cursor-pointer rounded-lg">
+                          <Image
+                            src={icon}
+                            alt={label}
+                            width={24}
+                            height={24}
+                          />
+                          <span className="text-sm">{label}</span>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           );
         })}
       </ul>
