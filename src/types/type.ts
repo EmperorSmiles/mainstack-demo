@@ -16,3 +16,9 @@ export interface Transaction {
   status: string;
   type: string;
 }
+
+export interface User {
+  last_name: string;
+  first_name: string;
+  email: string;
+}
