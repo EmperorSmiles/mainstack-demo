@@ -40,6 +40,8 @@ export default function Revenue() {
   );
   // const filterRef = useRef<HTMLDivElement>(null);
 
+  // I should probably clean this up and move a bit but it works fine for now and the goal is to present a working demo
+
   const displayFilter = useCallback(() => {
     setShowFilter(!showFilter);
   }, [showFilter]);
@@ -173,22 +175,6 @@ export default function Revenue() {
     (filters.dateRange.endDate ? 1 : 0) +
     filters.transactionTypes.length +
     filters.transactionStatus.length;
-
-  // useEffect(() => {
-  //   const handleClickOutside = (event: MouseEvent) => {
-  //     if (
-  //       filterRef.current &&
-  //       !filterRef.current.contains(event.target as Node)
-  //     ) {
-  //       displayFilter();
-  //     }
-  //   };
-
-  //   document.addEventListener("mousedown", handleClickOutside);
-  //   return () => {
-  //     document.removeEventListener("mousedown", handleClickOutside);
-  //   };
-  // }, [displayFilter]);
 
   return (
     <div
