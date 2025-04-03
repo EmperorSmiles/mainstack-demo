@@ -9,7 +9,7 @@ interface UserProp {
 }
 
 const UserProfile: React.FC<UserProp> = ({ user, onClick }) => {
-  console.log(user);
+  // console.log(user);
 
   const getInitials = () => {
     if (!user) return "JD";
