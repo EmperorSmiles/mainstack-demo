@@ -1,17 +1,17 @@
-// tsconfig.jest.json
-{
-  "compilerOptions": {
-    "target": "ESNext",
-    "module": "CommonJS", // Jest usually works best with CommonJS
-    "jsx": "react-jsx",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
+// // tsconfig.jest.json
+// {
+//   "compilerOptions": {
+//     "target": "ESNext",
+//     "module": "CommonJS", // Jest usually works best with CommonJS
+//     "jsx": "react-jsx",
+//     "strict": true,
+//     "esModuleInterop": true,
+//     "skipLibCheck": true,
+//     "forceConsistentCasingInFileNames": true,
 
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["src/*"]
-    }
-  }
-}
+//     "baseUrl": ".",
+//     "paths": {
+//       "@/*": ["src/*"]
+//     }
+//   }
+// }
