@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import MainChart from "@/components/MainChart";
 import TransactionsBlock from "../../components/TransactionsBlock";
 import { Transaction } from "@/types/type";
@@ -38,10 +38,11 @@ export default function Revenue() {
   const [walletData, setWalletData] = useState<Record<string, number> | null>(
     null
   );
+  const filterRef = useRef<HTMLDivElement>(null);
 
-  const displayFilter = () => {
+  const displayFilter = useCallback(() => {
     setShowFilter(!showFilter);
-  };
+  }, [showFilter]);
 
   const applyFilters = useCallback(() => {
     if (!transactions.length) {
@@ -172,6 +173,22 @@ export default function Revenue() {
     (filters.dateRange.endDate ? 1 : 0) +
     filters.transactionTypes.length +
     filters.transactionStatus.length;
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        filterRef.current &&
+        !filterRef.current.contains(event.target as Node)
+      ) {
+        displayFilter();
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [displayFilter]);
 
   return (
     <div className="mt-24 px-2 md:flex flex-col gap-2 md:gap-4 md:mx-8">
