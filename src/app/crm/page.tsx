@@ -1,7 +1,7 @@
 const Crm = () => {
   return (
     <div className="flex justify-center items-center align-middle h-screen">
-      Hello from Crm
+      <h1 className="text-2xl font-bold">Hello from Crm</h1>
     </div>
   );
 };
