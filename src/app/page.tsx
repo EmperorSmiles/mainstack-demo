@@ -9,7 +9,12 @@ export default function Home() {
   return (
     <div className="flex flex-col justify-center items-center h-screen gap-4">
       <h1 className="text-2xl font-bold">Hello, Mainstack</h1>
-      <Button onClick={() => router.push("/revenue")}>Go to Revenue</Button>
+      <Button
+        onClick={() => router.push("/revenue")}
+        className="hover:cursor-pointer"
+      >
+        Go to Revenue
+      </Button>
     </div>
   );
 }
