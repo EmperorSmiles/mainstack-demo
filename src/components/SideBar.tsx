@@ -20,7 +20,7 @@ const menuItems = [
 
 const SideBar = () => {
   return (
-    <aside className="h-auto fixed top-50 left-0 rounded-full shadow-lg bg-white p-4 ml-1 z-10 hidden md:block">
+    <aside className="fixed top-1/2 left-0 transform -translate-y-1/2 rounded-full shadow-lg bg-white p-4 ml-1 z-10 hidden md:block">
       <TooltipProvider>
         <ul className="flex flex-col gap-4">
           {menuItems.map(({ label, href, icon }, index) => (
